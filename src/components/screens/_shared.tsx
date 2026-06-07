@@ -13,19 +13,8 @@ export function ScreenShell({
   return (
     <div className="flex flex-col h-full px-7 py-8">
       {typeof step === "number" && typeof total === "number" && (
-        <div className="flex gap-2 mb-8 justify-center">
-          {Array.from({ length: total }).map((_, i) => (
-            <span
-              key={i}
-              className={`h-2 rounded-full transition-all ${
-                i === step
-                  ? "w-10 bg-foreground"
-                  : i < step
-                  ? "w-6 bg-foreground/60"
-                  : "w-6 bg-foreground/15"
-              }`}
-            />
-          ))}
+        <div className="mb-6 text-center text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+          Step {step + 1} of {total}
         </div>
       )}
       {children}
@@ -71,9 +60,8 @@ export function NavRow({
 
 export function NextHint({ text }: { text: string }) {
   return (
-    <div className="mt-4 rounded-2xl bg-accent/40 border border-accent px-4 py-3 text-base text-foreground/80 flex gap-2 items-start">
-      <span className="mt-0.5">👉</span>
-      <span><b>다음 단계:</b> {text}</span>
+    <div className="mt-4 rounded-2xl bg-accent/40 border border-accent px-4 py-3 text-base text-foreground/80">
+      <b>다음 단계:</b> {text}
     </div>
   );
 }

@@ -17,7 +17,6 @@ export function ARScreen({
         className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-12 bg-primary opacity-90"
         style={{ clipPath: "polygon(35% 0, 65% 0, 100% 100%, 0% 100%)" }}
       />
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-7xl select-none">👟👟</div>
 
       <div className="relative flex items-center justify-between p-4">
         <button className="size-11 rounded-full bg-background/80 grid place-items-center">
@@ -31,7 +30,6 @@ export function ARScreen({
       {open && (
         <div className="absolute left-4 right-4 top-24 rounded-3xl bg-primary text-primary-foreground p-5 shadow-2xl">
           <div className="flex items-center gap-3">
-            <div className="size-12 rounded-2xl bg-primary-foreground/15 grid place-items-center">🔔</div>
             <div className="flex-1">
               <div className="text-sm opacity-80">작품 #1 도착</div>
               <div className="text-2xl font-black leading-tight">금동 반가사유상</div>
@@ -53,9 +51,8 @@ export function ARScreen({
               <Volume2 className="size-5" /> 음성 설명 듣기 (2분)
             </button>
           )}
-          <div className="mt-3 text-[13px] opacity-90 flex items-start gap-1.5">
-            <span>👉</span>
-            <span><b>다음 단계:</b> 초록 길을 따라 두 번째 전시실로 이동하세요 (약 40초).</span>
+          <div className="mt-3 text-[13px] opacity-90">
+            <b>다음 단계:</b> 초록 길을 따라 두 번째 전시실로 이동하세요 (약 40초).
           </div>
         </div>
       )}
