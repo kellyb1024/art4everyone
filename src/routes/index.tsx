@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { SplashScreen } from "@/components/screens/SplashScreen";
 import { LocationScreen } from "@/components/screens/LocationScreen";
+import { MuseumSelectScreen } from "@/components/screens/MuseumSelectScreen";
 import { MuseumScreen } from "@/components/screens/MuseumScreen";
 import { DurationScreen } from "@/components/screens/DurationScreen";
 import { ExhibitionScreen } from "@/components/screens/ExhibitionScreen";
@@ -10,6 +11,7 @@ import { RouteReadyScreen } from "@/components/screens/RouteReadyScreen";
 import { GuideScreen } from "@/components/screens/GuideScreen";
 import { CautionScreen } from "@/components/screens/CautionScreen";
 import { ARScreen } from "@/components/screens/ARScreen";
+import { MUSEUMS } from "@/components/screens/museums";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,6 +28,7 @@ export const Route = createFileRoute("/")({
 export type Step =
   | "splash"
   | "location"
+  | "museum-select"
   | "museum"
   | "duration"
   | "exhibition"
@@ -37,6 +40,7 @@ export type Step =
 const ORDER: Step[] = [
   "splash",
   "location",
+  "museum-select",
   "museum",
   "duration",
   "exhibition",
@@ -48,6 +52,7 @@ const ORDER: Step[] = [
 
 function Index() {
   const [step, setStep] = useState<Step>("splash");
+  const [museumId, setMuseumId] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | null>(null);
   const [exhibition, setExhibition] = useState<string | null>(null);
   const [voiceGuide, setVoiceGuide] = useState(true);
@@ -57,14 +62,25 @@ function Index() {
   const next = () => setStep(ORDER[Math.min(idx + 1, ORDER.length - 1)]);
   const back = () => setStep(ORDER[Math.max(idx - 1, 0)]);
 
+  const museum = MUSEUMS.find((m) => m.id === museumId) ?? MUSEUMS[0];
+
   const render = () => {
     switch (step) {
       case "splash":
         return <SplashScreen onStart={() => go("location")} />;
       case "location":
-        return <LocationScreen onAllow={() => go("museum")} />;
+        return <LocationScreen onAllow={() => go("museum-select")} />;
+      case "museum-select":
+        return (
+          <MuseumSelectScreen
+            value={museumId}
+            onChange={setMuseumId}
+            onNext={() => go("museum")}
+            onBack={back}
+          />
+        );
       case "museum":
-        return <MuseumScreen onNext={() => go("duration")} onBack={back} />;
+        return <MuseumScreen museum={museum} onNext={() => go("duration")} onBack={back} />;
       case "duration":
         return (
           <DurationScreen
@@ -77,6 +93,7 @@ function Index() {
       case "exhibition":
         return (
           <ExhibitionScreen
+            exhibits={museum.exhibits}
             value={exhibition}
             onChange={setExhibition}
             onNext={() => go("route")}
@@ -86,7 +103,7 @@ function Index() {
       case "route":
         return (
           <RouteReadyScreen
-            exhibition={exhibition ?? "명품 30선"}
+            exhibition={exhibition ?? museum.exhibits[0].id}
             voiceGuide={voiceGuide}
             onToggleVoice={setVoiceGuide}
             onNext={() => go("guide")}
@@ -98,7 +115,7 @@ function Index() {
       case "caution":
         return <CautionScreen onStart={() => go("ar")} onBack={back} />;
       case "ar":
-        return <ARScreen voiceGuide={voiceGuide} onRestart={() => go("splash")} />;
+        return <ARScreen voiceGuide={voiceGuide} artwork={museum.artwork} onRestart={() => go("splash")} />;
     }
   };
 
