@@ -2,9 +2,9 @@ import jungangImg from "@/assets/museum.png.asset.json";
 import mmcaImg from "@/assets/mmca-museum.png.asset.json";
 import myeongpumImg from "@/assets/exhibit-myeongpum.png.asset.json";
 import koreanImg from "@/assets/exhibit-korean.png.asset.json";
-import mmca1 from "@/assets/mmca-exhibit-1.png.asset.json";
-import mmca2 from "@/assets/mmca-exhibit-2.png.asset.json";
-import mmca3 from "@/assets/mmca-exhibit-3.png.asset.json";
+import mmca1 from "@/assets/mmca-poster-1.png.asset.json";
+import mmca2 from "@/assets/mmca-poster-2.png.asset.json";
+import mmca3 from "@/assets/mmca-poster-3.png.asset.json";
 
 export type Exhibit = {
   id: string;
