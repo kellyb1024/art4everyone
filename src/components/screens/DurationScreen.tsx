@@ -27,7 +27,7 @@ export function DurationScreen({
   onNext: () => void;
 }) {
   return (
-    <ScreenShell step={1} total={4}>
+    <ScreenShell step={2} total={5}>
       <h1 className="text-3xl font-black leading-tight">
         관람 시간을<br />선택해주세요
       </h1>

@@ -17,7 +17,7 @@ export function RouteReadyScreen({
 }) {
   const label = exhibition === "korean24" ? "한국 문화의 독창성 24선" : "명품 30선";
   return (
-    <ScreenShell step={3} total={4}>
+    <ScreenShell step={4} total={5}>
       <h1 className="text-3xl font-black text-center leading-tight">
         경로가<br />준비되었어요!
       </h1>
