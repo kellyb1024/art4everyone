@@ -69,7 +69,15 @@ function Index() {
       case "splash":
         return <SplashScreen onStart={() => go("location")} />;
       case "location":
-        return <LocationScreen onAllow={() => go("museum-select")} />;
+        return (
+          <LocationScreen
+            onAllow={() => {
+              setMuseumId("jungang");
+              go("museum");
+            }}
+            onChoose={() => go("museum-select")}
+          />
+        );
       case "museum-select":
         return (
           <MuseumSelectScreen
