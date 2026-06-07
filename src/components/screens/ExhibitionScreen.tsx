@@ -1,5 +1,7 @@
 import { Check } from "lucide-react";
 import { ScreenShell, NavRow, NextHint } from "./_shared";
+import myeongpumImg from "@/assets/exhibit-myeongpum.png.asset.json";
+import koreanImg from "@/assets/exhibit-korean.png.asset.json";
 
 const EXHIBITS = [
   {
@@ -8,8 +10,7 @@ const EXHIBITS = [
     subtitle: "Top 30 Treasures",
     blurb: "고려청자 · 금동대향로 · 반가사유상 등 국보급 30점",
     tags: ["국보", "도자기", "불교 조각"],
-    emoji: "🏺",
-    color: "oklch(0.94 0.05 230)",
+    image: myeongpumImg.url,
   },
   {
     id: "korean24",
@@ -17,8 +18,7 @@ const EXHIBITS = [
     subtitle: "Uniquely Korean · 24 works",
     blurb: "한글 · 백자 · 민속 조각으로 보는 한국만의 시선",
     tags: ["민속", "한글", "회화"],
-    emoji: "📜",
-    color: "oklch(0.93 0.06 95)",
+    image: koreanImg.url,
   },
 ];
 
@@ -52,13 +52,13 @@ export function ExhibitionScreen({
                 active ? "border-primary shadow-xl shadow-primary/20" : "border-border"
               }`}
             >
-              <div className="p-5 flex items-start gap-4" style={{ background: e.color }}>
-                <div className="text-5xl">{e.emoji}</div>
-                <div className="flex-1">
+              <div className="bg-[oklch(0.96_0.01_85)]">
+                <img src={e.image} alt={e.title} className="w-full aspect-[16/9] object-contain bg-[oklch(0.96_0.01_85)]" />
+                <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="text-xl font-black text-foreground">{e.title}</div>
-                      <div className="text-sm text-foreground/60 font-medium">{e.subtitle}</div>
+                      <div className="text-lg font-black text-foreground">{e.title}</div>
+                      <div className="text-xs text-foreground/60 font-medium">{e.subtitle}</div>
                     </div>
                     {active && (
                       <div className="size-7 rounded-full bg-primary grid place-items-center shrink-0">
@@ -66,10 +66,10 @@ export function ExhibitionScreen({
                       </div>
                     )}
                   </div>
-                  <p className="mt-2 text-[15px] text-foreground/80 leading-relaxed">{e.blurb}</p>
+                  <p className="mt-2 text-sm text-foreground/80 leading-relaxed">{e.blurb}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {e.tags.map((t) => (
-                      <span key={t} className="text-xs font-semibold bg-background/60 rounded-full px-2.5 py-1">
+                      <span key={t} className="text-xs font-semibold bg-muted rounded-full px-2.5 py-1">
                         {t}
                       </span>
                     ))}
