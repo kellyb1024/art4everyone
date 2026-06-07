@@ -14,6 +14,7 @@ export function ARScreen({
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<"art" | "seat" | "map">("art");
   const [camStatus, setCamStatus] = useState<"prompt" | "granted" | "denied">("prompt");
+  const [camNotice, setCamNotice] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -30,6 +31,8 @@ export function ARScreen({
       setCamStatus("granted");
     } catch {
       setCamStatus("denied");
+      setCamNotice(true);
+      setTimeout(() => setCamNotice(false), 3500);
     }
   };
 
@@ -57,7 +60,7 @@ export function ARScreen({
         style={{ clipPath: "polygon(35% 0, 65% 0, 100% 100%, 0% 100%)" }}
       />
 
-      {camStatus !== "granted" && (
+      {camStatus === "prompt" && (
         <div className="absolute inset-0 z-20 bg-foreground/60 backdrop-blur-sm grid place-items-center p-6">
           <div className="w-full rounded-3xl bg-card p-7 shadow-2xl">
             <div className="flex justify-center mb-4">
@@ -70,26 +73,30 @@ export function ARScreen({
             </h2>
             <p className="mt-3 text-center text-base text-muted-foreground leading-relaxed">
               작품 위에 안내를 겹쳐 보여드리기 위해 카메라가 필요해요.
-              {camStatus === "denied" && (
-                <>
-                  <br />
-                  <b className="text-foreground">브라우저 설정</b>에서 카메라 권한을 허용해 주세요.
-                </>
-              )}
             </p>
             <button
               onClick={requestCamera}
               className="mt-6 w-full rounded-2xl bg-primary py-5 text-xl font-bold text-primary-foreground shadow-lg shadow-primary/30 active:scale-[0.98] transition"
             >
-              {camStatus === "denied" ? "다시 시도" : "카메라 허용"}
+              카메라 허용
             </button>
             <button
-              onClick={onRestart}
+              onClick={() => {
+                setCamStatus("denied");
+                setCamNotice(true);
+                setTimeout(() => setCamNotice(false), 3500);
+              }}
               className="mt-3 w-full rounded-2xl bg-primary/10 text-primary-deep border-2 border-primary/30 py-4 text-lg font-semibold"
             >
               나중에 하기
             </button>
           </div>
+        </div>
+      )}
+
+      {camNotice && (
+        <div className="absolute top-20 left-4 right-4 z-30 rounded-2xl bg-foreground/85 text-background px-4 py-3 text-sm text-center shadow-xl">
+          카메라 없이 안내를 계속할게요.
         </div>
       )}
 
