@@ -32,7 +32,7 @@ export function MuseumScreen({ onBack, onNext }: { onBack: () => void; onNext: (
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-muted py-3 px-2">
+    <div className="rounded-2xl bg-primary/10 py-3 px-2">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-base font-bold mt-0.5">{value}</div>
     </div>
