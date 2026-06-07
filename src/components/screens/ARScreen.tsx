@@ -1,11 +1,14 @@
 import { useState, type ReactNode } from "react";
 import { ArrowLeft, X, Map, Volume2, Armchair } from "lucide-react";
+import type { Artwork } from "./museums";
 
 export function ARScreen({
   voiceGuide,
+  artwork,
   onRestart,
 }: {
   voiceGuide: boolean;
+  artwork: Artwork;
   onRestart: () => void;
 }) {
   const [open, setOpen] = useState(true);
@@ -32,20 +35,20 @@ export function ARScreen({
         <div className="absolute left-4 right-4 top-24 rounded-3xl bg-primary text-primary-foreground p-5 shadow-2xl">
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <div className="text-sm opacity-80">작품 #1 도착</div>
-              <div className="text-2xl font-black leading-tight">금동 반가사유상</div>
+              <div className="text-sm opacity-80">{artwork.badge}</div>
+              <div className="text-2xl font-black leading-tight">{artwork.title}</div>
             </div>
             <button onClick={() => setOpen(false)} className="text-sm font-semibold underline opacity-90">
               닫기
             </button>
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-            <Meta k="시대" v="삼국 7C" />
-            <Meta k="국보" v="제 83호" />
-            <Meta k="재질" v="금동" />
+            {artwork.meta.map((m) => (
+              <Meta key={m.k} k={m.k} v={m.v} />
+            ))}
           </div>
           <p className="mt-3 text-[15px] leading-relaxed bg-primary-foreground/10 rounded-2xl p-3">
-            깊은 명상에 잠긴 보살의 미소. 한국 불교 조각의 정수로 꼽히는 작품이에요.
+            {artwork.description}
           </p>
           {voiceGuide && (
             <button className="mt-3 w-full rounded-2xl bg-primary-foreground text-primary py-3 font-bold inline-flex items-center justify-center gap-2">
@@ -53,7 +56,7 @@ export function ARScreen({
             </button>
           )}
           <div className="mt-3 text-[13px] opacity-90">
-            <b>다음 단계:</b> 초록 길을 따라 두 번째 전시실로 이동하세요 (약 40초).
+            <b>다음 단계:</b> {artwork.nextStep}
           </div>
         </div>
       )}
