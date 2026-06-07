@@ -38,7 +38,7 @@ export function NavRow({
       {onBack ? (
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 rounded-full bg-muted px-6 py-4 text-lg font-semibold text-foreground/70 active:scale-[0.98] transition"
+          className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary-deep border-2 border-primary/30 px-6 py-4 text-lg font-semibold active:scale-[0.98] transition"
         >
           <ArrowLeft className="size-5" /> 뒤로
         </button>
