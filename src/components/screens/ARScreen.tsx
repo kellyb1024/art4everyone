@@ -5,11 +5,11 @@ import type { Artwork } from "./museums";
 export function ARScreen({
   voiceGuide,
   artwork,
-  onRestart,
+  onFinish,
 }: {
   voiceGuide: boolean;
   artwork: Artwork;
-  onRestart: () => void;
+  onFinish: () => void;
 }) {
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<"art" | "seat" | "map">("art");
@@ -25,9 +25,6 @@ export function ARScreen({
         audio: false,
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
       setCamStatus("granted");
     } catch {
       setCamStatus("denied");
@@ -35,6 +32,13 @@ export function ARScreen({
       setTimeout(() => setCamNotice(false), 3500);
     }
   };
+
+  // video 요소가 화면에 렌더된 뒤(granted) 카메라 스트림을 연결한다.
+  useEffect(() => {
+    if (camStatus === "granted" && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [camStatus]);
 
   useEffect(() => {
     return () => {
@@ -55,9 +59,10 @@ export function ARScreen({
       ) : (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,oklch(0.92_0.02_75),oklch(0.78_0.03_75))]" />
       )}
+      {/* 카메라(실제 바닥) 위에 표시되는 목업용 초록 줄 (화면 중앙) */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-12 bg-primary opacity-90"
-        style={{ clipPath: "polygon(35% 0, 65% 0, 100% 100%, 0% 100%)" }}
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-[30%] bottom-0 w-2 rounded-full bg-primary opacity-90"
+        style={{ filter: "drop-shadow(0 0 8px oklch(0.5 0.2 142 / 0.6))" }}
       />
 
       {camStatus === "prompt" && (
@@ -104,7 +109,7 @@ export function ARScreen({
         <button className="size-11 rounded-full bg-background/80 grid place-items-center">
           <ArrowLeft className="size-5" />
         </button>
-        <button onClick={onRestart} className="size-11 rounded-full bg-background/80 grid place-items-center">
+        <button onClick={() => setOpen(false)} aria-label="카드 닫기" className="size-11 rounded-full bg-background/80 grid place-items-center">
           <X className="size-5" />
         </button>
       </div>
@@ -116,8 +121,8 @@ export function ARScreen({
               <div className="text-sm opacity-80">{artwork.badge}</div>
               <div className="text-2xl font-black leading-tight">{artwork.title}</div>
             </div>
-            <button onClick={() => setOpen(false)} className="text-sm font-semibold underline opacity-90">
-              닫기
+            <button onClick={() => setOpen(false)} aria-label="카드 닫기" className="shrink-0 size-9 rounded-full bg-primary-foreground/15 grid place-items-center">
+              <X className="size-5" />
             </button>
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
@@ -181,8 +186,11 @@ export function ARScreen({
           <ActionBtn icon={<Map className="size-6" />} label="지도 열기" primary onClick={() => { setView("art"); setOpen(true); }} />
           <ActionBtn icon={<Armchair className="size-6" />} label="가까운 좌석" onClick={() => setView("seat")} />
         </div>
-        <button onClick={onRestart} className="mt-2 w-full text-sm text-muted-foreground py-1.5">
-          처음으로 돌아가기
+        <button
+          onClick={onFinish}
+          className="mt-2 w-full rounded-2xl bg-primary/10 text-primary-deep border-2 border-primary/30 py-3 text-base font-semibold"
+        >
+          관람 종료
         </button>
       </div>
     </div>

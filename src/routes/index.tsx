@@ -11,6 +11,7 @@ import { RouteReadyScreen } from "@/components/screens/RouteReadyScreen";
 import { GuideScreen } from "@/components/screens/GuideScreen";
 import { CautionScreen } from "@/components/screens/CautionScreen";
 import { ARScreen } from "@/components/screens/ARScreen";
+import { EndScreen } from "@/components/screens/EndScreen";
 import { MUSEUMS } from "@/components/screens/museums";
 
 export const Route = createFileRoute("/")({
@@ -35,7 +36,8 @@ export type Step =
   | "route"
   | "guide"
   | "caution"
-  | "ar";
+  | "ar"
+  | "done";
 
 const ORDER: Step[] = [
   "splash",
@@ -48,6 +50,7 @@ const ORDER: Step[] = [
   "guide",
   "caution",
   "ar",
+  "done",
 ];
 
 function Index() {
@@ -63,6 +66,7 @@ function Index() {
   const back = () => setStep(ORDER[Math.max(idx - 1, 0)]);
 
   const museum = MUSEUMS.find((m) => m.id === museumId) ?? MUSEUMS[0];
+  const selectedExhibit = museum.exhibits.find((e) => e.id === exhibition) ?? museum.exhibits[0];
 
   const render = () => {
     switch (step) {
@@ -123,7 +127,18 @@ function Index() {
       case "caution":
         return <CautionScreen onStart={() => go("ar")} onBack={back} />;
       case "ar":
-        return <ARScreen voiceGuide={voiceGuide} artwork={museum.artwork} onRestart={() => go("splash")} />;
+        return <ARScreen voiceGuide={voiceGuide} artwork={museum.artwork} onFinish={() => go("done")} />;
+      case "done":
+        return (
+          <EndScreen
+            museum={museum}
+            exhibitionTitle={selectedExhibit.title}
+            duration={duration}
+            voiceGuide={voiceGuide}
+            onReplay={() => go("ar")}
+            onRestart={() => go("splash")}
+          />
+        );
     }
   };
 

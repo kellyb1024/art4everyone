@@ -12,4 +12,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Vercel 서버리스 배포용 nitro 프리셋 (Lovable 밖에서 배포)
+  nitro: { preset: "vercel" },
+  // 로컬 전용: cloudflare 터널 등 외부 호스트 허용
+  vite: {
+    server: { allowedHosts: true },
+  },
 });
