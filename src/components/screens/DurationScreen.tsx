@@ -1,4 +1,4 @@
-import { ScreenShell, NavRow, NextHint } from "./_shared";
+import { ScreenShell, NavRow } from "./_shared";
 
 const OPTIONS = [
   { id: "30", label: "30 분", shade: 0 },
@@ -52,7 +52,6 @@ export function DurationScreen({
           );
         })}
       </div>
-      <NextHint text="관심 있는 전시 주제를 골라요" />
       <div className="mt-auto">
         <NavRow onBack={onBack} onNext={onNext} nextDisabled={!value} />
       </div>

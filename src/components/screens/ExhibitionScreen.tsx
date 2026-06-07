@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { ScreenShell, NavRow, NextHint } from "./_shared";
+import { ScreenShell, NavRow } from "./_shared";
 import myeongpumImg from "@/assets/exhibit-myeongpum.png.asset.json";
 import koreanImg from "@/assets/exhibit-korean.png.asset.json";
 
@@ -80,7 +80,6 @@ export function ExhibitionScreen({
           );
         })}
       </div>
-      <NextHint text="가장 편한 동선을 만들어 드려요" />
       <div className="mt-auto">
         <NavRow onBack={onBack} onNext={onNext} nextDisabled={!value} />
       </div>

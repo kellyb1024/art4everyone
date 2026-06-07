@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import { ScreenShell, NavRow, NextHint } from "./_shared";
+import { ScreenShell, NavRow } from "./_shared";
 import museumImg from "@/assets/museum.png.asset.json";
 
 export function MuseumScreen({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
@@ -11,8 +11,8 @@ export function MuseumScreen({ onBack, onNext }: { onBack: () => void; onNext: (
       <div className="mt-3 inline-flex items-center gap-1.5 text-lg text-primary-deep font-semibold">
         <MapPin className="size-5" /> 용산구, 서울
       </div>
-      <div className="mt-6 rounded-3xl overflow-hidden bg-muted aspect-[4/3]">
-        <img src={museumImg.url} alt="국립중앙박물관 전경" className="w-full h-full object-cover" />
+      <div className="mt-6 rounded-3xl bg-background flex items-center justify-center">
+        <img src={museumImg.url} alt="국립중앙박물관 전경" className="w-full h-auto object-contain" />
       </div>
       <div className="mt-5 rounded-2xl bg-primary/10 border border-primary/20 px-4 py-3 text-center">
         <div className="text-xs font-semibold text-primary-deep uppercase tracking-wide">추천 관람 시간</div>
@@ -23,7 +23,6 @@ export function MuseumScreen({ onBack, onNext }: { onBack: () => void; onNext: (
         <Stat label="입장료" value="무료" />
         <Stat label="휴식 공간" value="12곳" />
       </div>
-      <NextHint text="방문 시간을 골라 동선을 짧게 만들 거예요" />
       <div className="mt-auto">
         <NavRow onBack={onBack} onNext={onNext} />
       </div>
