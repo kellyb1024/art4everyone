@@ -1,40 +1,22 @@
 import { Check } from "lucide-react";
 import { ScreenShell, NavRow } from "./_shared";
-import myeongpumImg from "@/assets/exhibit-myeongpum.png.asset.json";
-import koreanImg from "@/assets/exhibit-korean.png.asset.json";
-
-const EXHIBITS = [
-  {
-    id: "myeongpum30",
-    title: "명품 30선",
-    subtitle: "Top 30 Treasures",
-    blurb: "고려청자 · 금동대향로 · 반가사유상 등 국보급 30점",
-    tags: ["국보", "도자기", "불교 조각"],
-    image: myeongpumImg.url,
-  },
-  {
-    id: "korean24",
-    title: "한국 문화의 독창성 24선",
-    subtitle: "Uniquely Korean · 24 works",
-    blurb: "한글 · 백자 · 민속 조각으로 보는 한국만의 시선",
-    tags: ["민속", "한글", "회화"],
-    image: koreanImg.url,
-  },
-];
+import type { Exhibit } from "./museums";
 
 export function ExhibitionScreen({
+  exhibits,
   value,
   onChange,
   onBack,
   onNext,
 }: {
+  exhibits: Exhibit[];
   value: string | null;
   onChange: (v: string) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
   return (
-    <ScreenShell step={2} total={4}>
+    <ScreenShell step={3} total={5}>
       <h1 className="text-3xl font-black leading-tight">
         관심 있는<br />전시를 골라 주세요
       </h1>
@@ -42,7 +24,7 @@ export function ExhibitionScreen({
         무엇을 보게 될지 <b className="text-foreground">미리 확인</b>할 수 있어요.
       </p>
       <div className="mt-5 flex flex-col gap-4">
-        {EXHIBITS.map((e) => {
+        {exhibits.map((e) => {
           const active = value === e.id;
           return (
             <button
