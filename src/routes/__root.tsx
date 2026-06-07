@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Art4Everyone" },
+      { name: "description", content: "South Korea is experiencing rapid population aging, and patterns of cultural participation are changing alongside this demographic shift." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Art4Everyone" },
+      { property: "og:description", content: "South Korea is experiencing rapid population aging, and patterns of cultural participation are changing alongside this demographic shift." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Art4Everyone" },
+      { name: "twitter:description", content: "South Korea is experiencing rapid population aging, and patterns of cultural participation are changing alongside this demographic shift." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/96f45133-16f5-4d1f-b70d-bafd92c95d56/id-preview-40f08232--9f3cf92a-2cc7-4d5d-b63f-9c6e3baee60e.lovable.app-1780829197414.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/96f45133-16f5-4d1f-b70d-bafd92c95d56/id-preview-40f08232--9f3cf92a-2cc7-4d5d-b63f-9c6e3baee60e.lovable.app-1780829197414.png" },
     ],
     links: [
       {
