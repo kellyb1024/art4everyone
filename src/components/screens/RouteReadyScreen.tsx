@@ -1,5 +1,6 @@
 import { Armchair, Volume2, VolumeX } from "lucide-react";
 import { ScreenShell, NavRow } from "./_shared";
+import mapImg from "@/assets/map.png.asset.json";
 
 export function RouteReadyScreen({
   exhibition,
@@ -22,51 +23,14 @@ export function RouteReadyScreen({
       </h1>
       <div className="mt-3 text-center text-lg font-semibold text-primary-deep">{label}</div>
 
-      <div className="mt-5 rounded-3xl bg-muted p-4 relative aspect-[4/3]">
-        <svg viewBox="0 0 300 220" className="w-full h-full">
-          <rect x="0" y="0" width="300" height="220" fill="oklch(0.95 0.01 85)" rx="14" />
-          {[
-            [20, 20, 80, 60],
-            [110, 20, 90, 60],
-            [210, 20, 70, 60],
-            [20, 100, 80, 50],
-            [110, 100, 90, 50],
-            [210, 100, 70, 50],
-            [20, 165, 130, 40],
-            [160, 165, 120, 40],
-          ].map(([x, y, w, h], i) => (
-            <rect key={i} x={x} y={y} width={w} height={h} fill="oklch(0.88 0.02 85)" rx="4" />
-          ))}
-          <path
-            d="M250 30 Q230 90 170 100 T70 130 L70 190"
-            stroke="oklch(0.55 0.15 142)"
-            strokeWidth="5"
-            fill="none"
-            strokeLinecap="round"
-          />
-          <circle cx="250" cy="30" r="10" fill="oklch(0.85 0.15 85)" stroke="white" strokeWidth="3" />
-          <g transform="translate(165 95)">
-            <circle r="13" fill="oklch(0.72 0.15 350)" />
-            <text textAnchor="middle" dy="5" fontSize="14">🪑</text>
-          </g>
-          <g transform="translate(70 185)">
-            <circle r="13" fill="oklch(0.72 0.15 350)" />
-            <text textAnchor="middle" dy="5" fontSize="14">🪑</text>
-          </g>
-          <g transform="translate(40 40)">
-            <circle r="13" fill="oklch(0.7 0.15 230)" />
-            <text textAnchor="middle" dy="5" fontSize="12" fill="white">WC</text>
-          </g>
-        </svg>
-        <div className="absolute top-2 right-3 text-xs font-semibold text-foreground/70 bg-background/80 rounded-full px-2 py-1">
-          현재 위치 📍
-        </div>
+      <div className="mt-5 rounded-3xl overflow-hidden bg-muted relative">
+        <img src={mapImg.url} alt="박물관 경로 지도" className="w-full h-auto block" />
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-        <Pill emoji="🟢" label="초록 경로" />
-        <Pill emoji="🪑" label="휴식 2곳" />
-        <Pill emoji="🚻" label="화장실 1곳" />
+        <Pill label="초록 경로" color="oklch(0.55 0.15 142)" />
+        <Pill label="휴식 2곳" color="oklch(0.72 0.15 350)" />
+        <Pill label="화장실 1곳" color="oklch(0.7 0.15 230)" />
       </div>
 
       <button
@@ -99,10 +63,10 @@ export function RouteReadyScreen({
   );
 }
 
-function Pill({ emoji, label }: { emoji: string; label: string }) {
+function Pill({ label, color }: { label: string; color: string }) {
   return (
-    <div className="rounded-full bg-muted py-2 text-sm font-semibold">
-      <span className="mr-1">{emoji}</span>
+    <div className="rounded-full bg-muted py-2 text-sm font-semibold inline-flex items-center justify-center gap-1.5">
+      <span className="size-2.5 rounded-full" style={{ backgroundColor: color }} />
       {label}
     </div>
   );
