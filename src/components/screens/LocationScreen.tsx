@@ -1,7 +1,7 @@
 import { MapPin, ShieldCheck } from "lucide-react";
 import mapBg from "@/assets/location-map-bg.png.asset.json";
 
-export function LocationScreen({ onAllow }: { onAllow: () => void }) {
+export function LocationScreen({ onAllow, onChoose }: { onAllow: () => void; onChoose: () => void }) {
   return (
     <div className="h-full flex flex-col bg-background relative">
       <img
@@ -34,7 +34,7 @@ export function LocationScreen({ onAllow }: { onAllow: () => void }) {
             이번 한 번만 허용
           </button>
           <button
-            onClick={onAllow}
+            onClick={onChoose}
             className="w-full rounded-2xl bg-primary/10 text-primary-deep border-2 border-primary/30 py-4 text-lg font-semibold"
           >
             직접 박물관 선택
