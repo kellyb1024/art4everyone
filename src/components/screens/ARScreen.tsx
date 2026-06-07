@@ -97,7 +97,7 @@ export function ARScreen({
 
       <div className="absolute left-3 right-3 bottom-3 rounded-3xl bg-background/95 backdrop-blur p-3 shadow-2xl">
         <div className="grid grid-cols-2 gap-2">
-          <ActionBtn icon={<Map className="size-6" />} label="지도 열기" primary onClick={() => setView("map")} />
+          <ActionBtn icon={<Map className="size-6" />} label="지도 열기" primary onClick={() => { setView("art"); setOpen(true); }} />
           <ActionBtn icon={<Armchair className="size-6" />} label="가까운 좌석" onClick={() => setView("seat")} />
         </div>
         <button onClick={onRestart} className="mt-2 w-full text-sm text-muted-foreground py-1.5">
