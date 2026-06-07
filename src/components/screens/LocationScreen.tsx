@@ -1,9 +1,15 @@
 import { MapPin, ShieldCheck } from "lucide-react";
+import mapBg from "@/assets/location-map-bg.png.asset.json";
 
 export function LocationScreen({ onAllow }: { onAllow: () => void }) {
   return (
-    <div className="h-full flex flex-col bg-[oklch(0.92_0.04_140)] relative">
-      <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_20%,oklch(0.85_0.08_140),transparent_50%),radial-gradient(circle_at_70%_60%,oklch(0.88_0.06_85),transparent_50%)]" />
+    <div className="h-full flex flex-col bg-background relative">
+      <img
+        src={mapBg.url}
+        alt="지도 배경"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-background/30" />
       <div className="relative mt-auto m-5 rounded-3xl bg-card p-7 shadow-2xl">
         <div className="flex justify-center mb-4">
           <div className="size-16 rounded-2xl bg-primary/15 grid place-items-center">
