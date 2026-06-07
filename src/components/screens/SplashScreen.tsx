@@ -2,7 +2,7 @@ export function SplashScreen({ onStart }: { onStart: () => void }) {
   return (
     <button
       onClick={onStart}
-      className="relative w-full h-full flex items-center justify-center bg-background active:bg-muted transition"
+      className="relative w-full h-full flex flex-col items-center justify-center gap-8 bg-background active:bg-muted transition"
     >
       <svg
         viewBox="0 0 138 94"
@@ -17,6 +17,9 @@ export function SplashScreen({ onStart }: { onStart: () => void }) {
           strokeWidth="15"
         />
       </svg>
+      <p className="text-base text-muted-foreground font-medium">
+        화면을 눌러 시작하세요
+      </p>
     </button>
   );
 }
