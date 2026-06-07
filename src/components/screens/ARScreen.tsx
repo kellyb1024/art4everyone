@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { ArrowLeft, X, Map, Volume2, Armchair } from "lucide-react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
+import { ArrowLeft, X, Map, Volume2, Armchair, Camera } from "lucide-react";
 import type { Artwork } from "./museums";
 
 export function ARScreen({
@@ -13,14 +13,85 @@ export function ARScreen({
 }) {
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<"art" | "seat" | "map">("art");
+  const [camStatus, setCamStatus] = useState<"prompt" | "granted" | "denied">("prompt");
+  const streamRef = useRef<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const requestCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setCamStatus("granted");
+    } catch {
+      setCamStatus("denied");
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
 
   return (
     <div className="h-full relative bg-[oklch(0.86_0.02_75)] overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,oklch(0.92_0.02_75),oklch(0.78_0.03_75))]" />
+      {camStatus === "granted" ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,oklch(0.92_0.02_75),oklch(0.78_0.03_75))]" />
+      )}
       <div
         className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-12 bg-primary opacity-90"
         style={{ clipPath: "polygon(35% 0, 65% 0, 100% 100%, 0% 100%)" }}
       />
+
+      {camStatus !== "granted" && (
+        <div className="absolute inset-0 z-20 bg-foreground/60 backdrop-blur-sm grid place-items-center p-6">
+          <div className="w-full rounded-3xl bg-card p-7 shadow-2xl">
+            <div className="flex justify-center mb-4">
+              <div className="size-16 rounded-2xl bg-primary/15 grid place-items-center">
+                <Camera className="size-8 text-primary" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-center leading-snug">
+              카메라를<br />사용해도 될까요?
+            </h2>
+            <p className="mt-3 text-center text-base text-muted-foreground leading-relaxed">
+              작품 위에 안내를 겹쳐 보여드리기 위해 카메라가 필요해요.
+              {camStatus === "denied" && (
+                <>
+                  <br />
+                  <b className="text-foreground">브라우저 설정</b>에서 카메라 권한을 허용해 주세요.
+                </>
+              )}
+            </p>
+            <button
+              onClick={requestCamera}
+              className="mt-6 w-full rounded-2xl bg-primary py-5 text-xl font-bold text-primary-foreground shadow-lg shadow-primary/30 active:scale-[0.98] transition"
+            >
+              {camStatus === "denied" ? "다시 시도" : "카메라 허용"}
+            </button>
+            <button
+              onClick={onRestart}
+              className="mt-3 w-full rounded-2xl bg-primary/10 text-primary-deep border-2 border-primary/30 py-4 text-lg font-semibold"
+            >
+              나중에 하기
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="relative flex items-center justify-between p-4">
         <button className="size-11 rounded-full bg-background/80 grid place-items-center">
