@@ -23,8 +23,8 @@ export function RouteReadyScreen({
       </h1>
       <div className="mt-3 text-center text-lg font-semibold text-primary-deep">{label}</div>
 
-      <div className="mt-5 rounded-3xl overflow-hidden bg-muted relative">
-        <img src={mapImg.url} alt="박물관 경로 지도" className="w-full h-auto block" />
+      <div className="mt-5 rounded-3xl bg-background relative">
+        <img src={mapImg.url} alt="박물관 경로 지도" className="w-full h-auto object-contain block" />
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">

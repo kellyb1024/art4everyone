@@ -29,7 +29,7 @@ export function LocationScreen({ onAllow }: { onAllow: () => void }) {
           </button>
           <button
             onClick={onAllow}
-            className="w-full rounded-2xl bg-muted py-4 text-lg font-semibold text-foreground/70"
+            className="w-full rounded-2xl bg-primary/10 text-primary-deep border-2 border-primary/30 py-4 text-lg font-semibold"
           >
             직접 박물관 선택
           </button>
