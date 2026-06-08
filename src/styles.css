@@ -154,16 +154,15 @@
 }
 
 /* 크로스 디바이스 레이아웃: 휴대폰 / 아이패드(세로·가로) / 데스크톱 모두 대응.
-   구형 Safari(iPadOS < 15.4)는 dvh 단위를 모른다 → 높이가 0으로 무너져 흰 화면이
-   되므로, vh 폴백을 먼저 선언하고 지원 환경에서만 dvh로 덮어쓴다. */
+   구형 Safari(iPadOS < 15.4)는 dvh 단위를 모른다 → 높이가 0으로 무너져 흰 화면이 된다.
+   base에는 vh를 쓰고, dvh는 @supports 안에서만 덮어쓴다. (vh/dvh를 한 규칙에 연달아
+   두면 CSS minifier가 vh 폴백을 중복으로 보고 지워버리므로 반드시 분리해야 한다.) */
 .art4-stage {
   min-height: 100vh;
-  min-height: 100dvh;
 }
 
 .art4-phone-frame {
   height: 100vh;
-  height: 100dvh;
 }
 
 @media (min-width: 640px) {
@@ -172,7 +171,21 @@
        아이패드 가로 모드(높이 ~820px)에서도 하단 버튼이 잘리지 않는다. */
     height: 860px;
     max-height: calc(100vh - 3rem);
-    max-height: calc(100dvh - 3rem);
+  }
+}
+
+@supports (height: 100dvh) {
+  .art4-stage {
+    min-height: 100dvh;
+  }
+  .art4-phone-frame {
+    height: 100dvh;
+  }
+  @media (min-width: 640px) {
+    .art4-phone-frame {
+      height: 860px;
+      max-height: calc(100dvh - 3rem);
+    }
   }
 }
 
