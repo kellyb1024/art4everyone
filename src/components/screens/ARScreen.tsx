@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { ArrowLeft, X, Map, Volume2, Armchair, Camera } from "lucide-react";
 import type { Artwork } from "./museums";
+import mapImg from "@/assets/map.png.asset.json";
 
 export function ARScreen({
   voiceGuide,
@@ -59,11 +60,20 @@ export function ARScreen({
       ) : (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,oklch(0.92_0.02_75),oklch(0.78_0.03_75))]" />
       )}
-      {/* 카메라(실제 바닥) 위에 표시되는 목업용 초록 줄 (화면 중앙) */}
+      {/* AR 바닥 경로(목업): 소실점에서 발 앞까지 이어지는 반투명 원근 경로.
+          팝업 카드는 이 위에 떠 있고, 경로는 카드 뒤로 끊김 없이 이어진다. */}
       <div
-        className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-[30%] bottom-0 w-2 rounded-full bg-primary opacity-90"
-        style={{ filter: "drop-shadow(0 0 8px oklch(0.5 0.2 142 / 0.6))" }}
-      />
+        className="pointer-events-none absolute inset-x-0 bottom-0 top-[14%]"
+        style={{
+          clipPath: "polygon(48.5% 0%, 51.5% 0%, 87% 100%, 13% 100%)",
+          filter: "drop-shadow(0 0 18px oklch(0.55 0.22 142 / 0.55))",
+        }}
+      >
+        {/* 반투명 초록 카펫 — 실제 바닥이 비쳐 보이도록, 아래로 갈수록 진하게 */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.6_0.22_142/0.8),oklch(0.78_0.16_142/0.08))]" />
+        {/* 진행 방향(앞으로) 화살표 흐름 */}
+        <div className="absolute inset-0 art4-ar-path" />
+      </div>
 
       {camStatus === "prompt" && (
         <div className="absolute inset-0 z-20 bg-foreground/60 backdrop-blur-sm grid place-items-center p-6">
@@ -175,6 +185,9 @@ export function ARScreen({
             </div>
             <button onClick={() => setView("art")} className="text-sm font-semibold underline opacity-90">닫기</button>
           </div>
+          <div className="mt-3 rounded-2xl bg-background overflow-hidden">
+            <img src={mapImg.url} alt="박물관 경로 지도" className="w-full h-auto object-contain block" />
+          </div>
           <p className="mt-3 text-[15px] leading-relaxed bg-primary-foreground/10 rounded-2xl p-3">
             초록 경로를 따라 두 번째 전시실로 이동하세요. 중간에 휴식 좌석 1곳이 있어요.
           </p>
@@ -183,7 +196,7 @@ export function ARScreen({
 
       <div className="absolute left-3 right-3 bottom-3 rounded-3xl bg-background/95 backdrop-blur p-3 shadow-2xl">
         <div className="grid grid-cols-2 gap-2">
-          <ActionBtn icon={<Map className="size-6" />} label="지도 열기" primary onClick={() => { setView("art"); setOpen(true); }} />
+          <ActionBtn icon={<Map className="size-6" />} label="지도 열기" primary onClick={() => { setView("map"); setOpen(true); }} />
           <ActionBtn icon={<Armchair className="size-6" />} label="가까운 좌석" onClick={() => setView("seat")} />
         </div>
         <button

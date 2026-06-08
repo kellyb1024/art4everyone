@@ -143,7 +143,7 @@ function Index() {
   };
 
   return (
-    <main className="min-h-dvh w-full bg-secondary flex items-center justify-center p-0 sm:p-6">
+    <main className="art4-stage w-full bg-secondary flex items-center justify-center p-0 sm:p-6">
       <PhoneFrame>{render()}</PhoneFrame>
     </main>
   );

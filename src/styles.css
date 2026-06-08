@@ -152,3 +152,43 @@
   --color-primary-soft: var(--primary-soft);
   --color-primary-deep: var(--primary-deep);
 }
+
+/* 크로스 디바이스 레이아웃: 휴대폰 / 아이패드(세로·가로) / 데스크톱 모두 대응.
+   구형 Safari(iPadOS < 15.4)는 dvh 단위를 모른다 → 높이가 0으로 무너져 흰 화면이
+   되므로, vh 폴백을 먼저 선언하고 지원 환경에서만 dvh로 덮어쓴다. */
+.art4-stage {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.art4-phone-frame {
+  height: 100vh;
+  height: 100dvh;
+}
+
+@media (min-width: 640px) {
+  .art4-phone-frame {
+    /* 태블릿·데스크톱: 폰 목업 높이를 쓰되 화면 높이를 넘지 않게 제한한다.
+       아이패드 가로 모드(높이 ~820px)에서도 하단 버튼이 잘리지 않는다. */
+    height: 860px;
+    max-height: calc(100vh - 3rem);
+    max-height: calc(100dvh - 3rem);
+  }
+}
+
+/* AR 바닥 경로(목업): 앞으로 흐르는 방향 화살표 */
+.art4-ar-path {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='32' viewBox='0 0 48 32'><path d='M6 25 L24 8 L42 25' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: repeat-y;
+  background-position: center 0;
+  background-size: 72% 64px;
+  opacity: 0.92;
+  animation: art4-ar-flow 1s linear infinite;
+}
+@keyframes art4-ar-flow {
+  from { background-position: center 0; }
+  to { background-position: center -64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art4-ar-path { animation: none; }
+}
