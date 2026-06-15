@@ -13,6 +13,8 @@ export function EndScreen({
   museum,
   exhibitionTitle,
   duration,
+  artworkCount,
+  totalCount,
   voiceGuide,
   onReplay,
   onRestart,
@@ -20,10 +22,14 @@ export function EndScreen({
   museum: Museum;
   exhibitionTitle: string;
   duration: string | null;
+  artworkCount: number;
+  totalCount: number;
   voiceGuide: boolean;
   onReplay: () => void;
   onRestart: () => void;
 }) {
+  // 추천 작품을 모두 보지 않고 중간에 종료했는지
+  const endedEarly = artworkCount > 0 && artworkCount < totalCount;
   return (
     <div className="h-full flex flex-col bg-background px-7 py-10">
       <div className="flex-1 flex flex-col items-center justify-center text-center">
@@ -34,12 +40,23 @@ export function EndScreen({
           관람을<br />마쳤어요 🎉
         </h1>
         <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-          오늘도 편안한 관람 되셨길 바라요.<br />수고 많으셨어요.
+          {endedEarly ? (
+            <>여기까지 <b className="text-foreground">{artworkCount}점</b>을 함께 둘러봤어요.<br />언제든 이어서 관람하실 수 있어요.</>
+          ) : (
+            <>오늘도 편안한 관람 되셨길 바라요.<br />수고 많으셨어요.</>
+          )}
         </p>
 
         <div className="mt-8 w-full rounded-3xl bg-primary/5 border border-primary/15 p-5 text-left">
           <Row icon={<Landmark className="size-5 text-primary" />} label="관람한 곳" value={museum.name} />
           <Row icon={<Image className="size-5 text-primary" />} label="관람한 전시" value={exhibitionTitle} />
+          {artworkCount > 0 && (
+            <Row
+              icon={<Image className="size-5 text-primary" />}
+              label="관람한 작품"
+              value={endedEarly ? `${artworkCount} / 총 ${totalCount}점` : `${artworkCount}점`}
+            />
+          )}
           {duration && (
             <Row
               icon={<Clock className="size-5 text-primary" />}

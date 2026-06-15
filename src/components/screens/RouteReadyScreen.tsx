@@ -1,36 +1,95 @@
-import { Armchair, Volume2, VolumeX } from "lucide-react";
+import type { ReactNode } from "react";
+import { Armchair, Volume2, VolumeX, Clock, MapPin } from "lucide-react";
 import { ScreenShell, NavRow } from "./_shared";
-import mapImg from "@/assets/map.png.asset.json";
+import type { Recommendation } from "./recommend";
+import { TIER_LABEL } from "./recommend";
+import { CourseMap } from "./CourseMap";
+
+const DURATION_LABEL: Record<string, string> = {
+  "30": "30분",
+  "60": "1시간",
+  "120": "2시간",
+  "120+": "2시간 이상",
+};
 
 export function RouteReadyScreen({
-  exhibition,
+  exhibitTitle,
+  recommendation,
+  duration,
   voiceGuide,
   onToggleVoice,
   onBack,
   onNext,
 }: {
-  exhibition: string;
+  exhibitTitle: string;
+  recommendation: Recommendation;
+  duration: string | null;
   voiceGuide: boolean;
   onToggleVoice: (v: boolean) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
-  const label = exhibition === "korean24" ? "한국 문화의 독창성 24선" : "명품 30선";
+  const { route, count, minutes, total } = recommendation;
+  const durationLabel = duration ? (DURATION_LABEL[duration] ?? duration) : null;
+
+  if (count === 0) {
+    return (
+      <ScreenShell step={4} total={5}>
+        <h1 className="text-3xl font-black text-center leading-tight">
+          이 전시는<br />작품 안내 준비 중이에요
+        </h1>
+        <p className="mt-4 text-center text-base text-muted-foreground leading-relaxed">
+          곧 작품별 추천 동선을 제공할 예정이에요.<br />다른 전시를 선택해 주세요.
+        </p>
+        <div className="mt-auto">
+          <NavRow onBack={onBack} />
+        </div>
+      </ScreenShell>
+    );
+  }
+
   return (
     <ScreenShell step={4} total={5}>
       <h1 className="text-3xl font-black text-center leading-tight">
         경로가<br />준비되었어요!
       </h1>
-      <div className="mt-3 text-center text-lg font-semibold text-primary-deep">{label}</div>
+      <div className="mt-3 text-center text-lg font-semibold text-primary-deep">{exhibitTitle}</div>
 
-      <div className="mt-5 rounded-3xl bg-background relative">
-        <img src={mapImg.url} alt="박물관 경로 지도" className="w-full h-auto object-contain block" />
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <Stat icon={<MapPin className="size-5" />} value={`작품 ${count}점`} sub={`전체 ${total}점 중`} />
+        <Stat
+          icon={<Clock className="size-5" />}
+          value={`약 ${minutes}분`}
+          sub={durationLabel ? `${durationLabel} 코스` : "추천 코스"}
+        />
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-        <Pill label="초록 경로" color="oklch(0.55 0.15 142)" />
-        <Pill label="휴식 2곳" color="oklch(0.72 0.15 350)" />
-        <Pill label="화장실 1곳" color="oklch(0.7 0.15 230)" />
+      <div className="mt-4">
+        <div className="text-sm font-bold text-muted-foreground mb-2">코스 지도</div>
+        <CourseMap route={route} />
+      </div>
+
+      <div className="mt-4">
+        <div className="text-sm font-bold text-muted-foreground mb-2">관람 순서</div>
+        <ol className="flex flex-col gap-2">
+          {route.map((a, i) => (
+            <li key={a.id} className="flex items-center gap-3 rounded-2xl bg-card border border-border px-3 py-2.5">
+              <span className="shrink-0 size-7 rounded-full bg-primary text-primary-foreground grid place-items-center text-sm font-bold">
+                {i + 1}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold text-[15px] truncate">{a.title}</span>
+                <span className="block text-xs text-muted-foreground truncate">{a.place}</span>
+              </span>
+              {a.treasure && (
+                <span className="shrink-0 rounded-full bg-accent text-foreground text-[11px] font-bold px-2 py-0.5">
+                  {a.treasure}
+                </span>
+              )}
+              <span className="shrink-0 text-[11px] font-semibold text-primary-deep">{TIER_LABEL[a.tier]}</span>
+            </li>
+          ))}
+        </ol>
       </div>
 
       <button
@@ -53,7 +112,7 @@ export function RouteReadyScreen({
 
       <div className="mt-4 rounded-2xl bg-accent/40 border border-accent px-4 py-3 text-base flex gap-2 items-start">
         <Armchair className="size-5 mt-0.5" />
-        <span>경로 중간 <b>휴식 좌석 2곳</b>이 포함되어 있어요. 언제든 쉬어 가세요.</span>
+        <span>경로 중간 <b>휴식 좌석</b>이 포함되어 있어요. 언제든 쉬어 가세요.</span>
       </div>
 
       <div className="mt-auto">
@@ -63,11 +122,14 @@ export function RouteReadyScreen({
   );
 }
 
-function Pill({ label, color }: { label: string; color: string }) {
+function Stat({ icon, value, sub }: { icon: ReactNode; value: string; sub: string }) {
   return (
-    <div className="rounded-full bg-muted py-2 text-sm font-semibold inline-flex items-center justify-center gap-1.5">
-      <span className="size-2.5 rounded-full" style={{ backgroundColor: color }} />
-      {label}
+    <div className="rounded-2xl bg-primary/5 border border-primary/15 px-4 py-3">
+      <div className="flex items-center gap-2 text-primary-deep">
+        {icon}
+        <span className="text-xl font-black">{value}</span>
+      </div>
+      <div className="mt-0.5 text-xs text-muted-foreground">{sub}</div>
     </div>
   );
 }

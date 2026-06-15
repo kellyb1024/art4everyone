@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { SplashScreen } from "@/components/screens/SplashScreen";
 import { LocationScreen } from "@/components/screens/LocationScreen";
@@ -13,6 +13,7 @@ import { CautionScreen } from "@/components/screens/CautionScreen";
 import { ARScreen } from "@/components/screens/ARScreen";
 import { EndScreen } from "@/components/screens/EndScreen";
 import { MUSEUMS } from "@/components/screens/museums";
+import { recommendRoute } from "@/components/screens/recommend";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,6 +60,7 @@ function Index() {
   const [duration, setDuration] = useState<string | null>(null);
   const [exhibition, setExhibition] = useState<string | null>(null);
   const [voiceGuide, setVoiceGuide] = useState(true);
+  const [viewedCount, setViewedCount] = useState(0);
 
   const idx = ORDER.indexOf(step);
   const go = (s: Step) => setStep(s);
@@ -67,6 +69,12 @@ function Index() {
 
   const museum = MUSEUMS.find((m) => m.id === museumId) ?? MUSEUMS[0];
   const selectedExhibit = museum.exhibits.find((e) => e.id === exhibition) ?? museum.exhibits[0];
+
+  // 선택한 전시 + 관람 시간으로 추천 동선을 계산한다.
+  const recommendation = useMemo(
+    () => recommendRoute(selectedExhibit.artworks, duration),
+    [selectedExhibit, duration],
+  );
 
   const render = () => {
     switch (step) {
@@ -115,7 +123,9 @@ function Index() {
       case "route":
         return (
           <RouteReadyScreen
-            exhibition={exhibition ?? museum.exhibits[0].id}
+            exhibitTitle={selectedExhibit.title}
+            recommendation={recommendation}
+            duration={duration}
             voiceGuide={voiceGuide}
             onToggleVoice={setVoiceGuide}
             onNext={() => go("guide")}
@@ -127,13 +137,24 @@ function Index() {
       case "caution":
         return <CautionScreen onStart={() => go("ar")} onBack={back} />;
       case "ar":
-        return <ARScreen voiceGuide={voiceGuide} artwork={museum.artwork} onFinish={() => go("done")} />;
+        return (
+          <ARScreen
+            voiceGuide={voiceGuide}
+            route={recommendation.route}
+            onFinish={(viewed) => {
+              setViewedCount(viewed);
+              go("done");
+            }}
+          />
+        );
       case "done":
         return (
           <EndScreen
             museum={museum}
             exhibitionTitle={selectedExhibit.title}
             duration={duration}
+            artworkCount={viewedCount}
+            totalCount={recommendation.count}
             voiceGuide={voiceGuide}
             onReplay={() => go("ar")}
             onRestart={() => go("splash")}

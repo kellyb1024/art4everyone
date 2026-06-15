@@ -1,23 +1,45 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
-import { ArrowLeft, X, Map, Volume2, Armchair, Camera } from "lucide-react";
+import { ArrowLeft, ArrowRight, X, Map, Volume2, Armchair, Camera, MapPin, Info } from "lucide-react";
 import type { Artwork } from "./museums";
-import mapImg from "@/assets/map.png.asset.json";
+import { CourseMap } from "./CourseMap";
 
 export function ARScreen({
   voiceGuide,
-  artwork,
+  route,
   onFinish,
 }: {
   voiceGuide: boolean;
-  artwork: Artwork;
-  onFinish: () => void;
+  route: Artwork[];
+  /** 관람을 마칠 때 호출. viewedCount = 지금까지 관람한 작품 수 */
+  onFinish: (viewedCount: number) => void;
 }) {
+  const [idx, setIdx] = useState(0);
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<"art" | "seat" | "map">("art");
   const [camStatus, setCamStatus] = useState<"prompt" | "granted" | "denied">("prompt");
   const [camNotice, setCamNotice] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const artwork = route[idx];
+  const isLast = idx >= route.length - 1;
+  const next = !isLast ? route[idx + 1] : null;
+
+  const goNext = () => {
+    if (isLast) {
+      onFinish(route.length);
+      return;
+    }
+    setIdx((i) => i + 1);
+    setView("art");
+    setOpen(true);
+  };
+  const goPrev = () => {
+    if (idx === 0) return;
+    setIdx((i) => i - 1);
+    setView("art");
+    setOpen(true);
+  };
 
   const requestCamera = async () => {
     try {
@@ -47,6 +69,27 @@ export function ARScreen({
     };
   }, []);
 
+  // 추천 작품이 없는 경우(예: 데이터 준비 중 전시)에도 안전하게 종료할 수 있도록.
+  if (!artwork) {
+    return (
+      <div className="h-full grid place-items-center bg-background p-8 text-center">
+        <div>
+          <p className="text-lg text-muted-foreground">표시할 작품이 없어요.</p>
+          <button
+            onClick={() => onFinish(0)}
+            className="mt-5 rounded-2xl bg-primary px-6 py-3 font-bold text-primary-foreground"
+          >
+            돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const nextStepText = next
+    ? `다음 작품: ${next.title} · ${next.place}`
+    : "마지막 작품이에요. 관람을 마치면 ‘관람 종료’를 눌러 주세요.";
+
   return (
     <div className="h-full relative bg-[oklch(0.86_0.02_75)] overflow-hidden">
       {camStatus === "granted" ? (
@@ -60,8 +103,7 @@ export function ARScreen({
       ) : (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,oklch(0.92_0.02_75),oklch(0.78_0.03_75))]" />
       )}
-      {/* AR 바닥 경로(목업): 소실점에서 발 앞까지 이어지는 반투명 원근 경로.
-          팝업 카드는 이 위에 떠 있고, 경로는 카드 뒤로 끊김 없이 이어진다. */}
+      {/* AR 바닥 경로(목업): 소실점에서 발 앞까지 이어지는 반투명 원근 경로. */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 top-[14%]"
         style={{
@@ -69,9 +111,7 @@ export function ARScreen({
           filter: "drop-shadow(0 0 18px oklch(0.55 0.22 142 / 0.55))",
         }}
       >
-        {/* 반투명 초록 카펫 — 실제 바닥이 비쳐 보이도록, 아래로 갈수록 진하게 */}
         <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.6_0.22_142/0.8),oklch(0.78_0.16_142/0.08))]" />
-        {/* 진행 방향(앞으로) 화살표 흐름 */}
         <div className="absolute inset-0 art4-ar-path" />
       </div>
 
@@ -116,21 +156,45 @@ export function ARScreen({
       )}
 
       <div className="relative flex items-center justify-between p-4">
-        <button className="size-11 rounded-full bg-background/80 grid place-items-center">
+        <button
+          onClick={goPrev}
+          disabled={idx === 0}
+          aria-label="이전 작품"
+          className="size-11 rounded-full bg-background/80 grid place-items-center disabled:opacity-40"
+        >
           <ArrowLeft className="size-5" />
         </button>
-        <button onClick={() => setOpen(false)} aria-label="카드 닫기" className="size-11 rounded-full bg-background/80 grid place-items-center">
+        <div className="rounded-full bg-background/80 px-4 py-1.5 text-sm font-bold">
+          작품 {idx + 1} / {route.length}
+        </div>
+        <button onClick={() => onFinish(idx + 1)} aria-label="관람 종료" className="size-11 rounded-full bg-background/80 grid place-items-center">
           <X className="size-5" />
         </button>
       </div>
+
+      {!open && view === "art" && (
+        <button
+          onClick={() => setOpen(true)}
+          className="absolute left-1/2 -translate-x-1/2 top-24 z-10 rounded-full bg-primary text-primary-foreground px-5 py-3 text-base font-bold shadow-lg shadow-primary/30 inline-flex items-center gap-2 active:scale-[0.98] transition"
+        >
+          <Info className="size-5" /> 작품 설명 다시 보기
+        </button>
+      )}
 
       {open && view === "art" && (
         <div className="absolute left-4 right-4 top-24 rounded-3xl bg-primary text-primary-foreground p-5 shadow-2xl">
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <div className="text-sm opacity-80">{artwork.badge}</div>
+              <div className="text-sm opacity-80 flex items-center gap-1.5">
+                <MapPin className="size-3.5" /> {artwork.place}
+              </div>
               <div className="text-2xl font-black leading-tight">{artwork.title}</div>
             </div>
+            {artwork.treasure && (
+              <span className="shrink-0 rounded-full bg-primary-foreground/20 text-xs font-bold px-2.5 py-1">
+                {artwork.treasure}
+              </span>
+            )}
             <button onClick={() => setOpen(false)} aria-label="카드 닫기" className="shrink-0 size-9 rounded-full bg-primary-foreground/15 grid place-items-center">
               <X className="size-5" />
             </button>
@@ -149,7 +213,7 @@ export function ARScreen({
             </button>
           )}
           <div className="mt-3 text-[13px] opacity-90">
-            <b>다음 단계:</b> {artwork.nextStep}
+            <b>다음 단계:</b> {nextStepText}
           </div>
         </div>
       )}
@@ -181,29 +245,30 @@ export function ARScreen({
             <Map className="size-7" />
             <div className="flex-1">
               <div className="text-2xl font-black leading-tight">지도</div>
-              <div className="text-sm opacity-80">현재 위치와 다음 작품</div>
+              <div className="text-sm opacity-80">{artwork.place}</div>
             </div>
             <button onClick={() => setView("art")} className="text-sm font-semibold underline opacity-90">닫기</button>
           </div>
-          <div className="mt-3 rounded-2xl bg-background overflow-hidden">
-            <img src={mapImg.url} alt="박물관 경로 지도" className="w-full h-auto object-contain block" />
+          <div className="mt-3 rounded-2xl bg-background p-3 max-h-[40vh] overflow-y-auto">
+            <CourseMap route={route} currentKey={`${artwork.floor}-${artwork.room}`} />
           </div>
           <p className="mt-3 text-[15px] leading-relaxed bg-primary-foreground/10 rounded-2xl p-3">
-            초록 경로를 따라 두 번째 전시실로 이동하세요. 중간에 휴식 좌석 1곳이 있어요.
+            {nextStepText}
           </p>
         </div>
       )}
 
       <div className="absolute left-3 right-3 bottom-3 rounded-3xl bg-background/95 backdrop-blur p-3 shadow-2xl">
         <div className="grid grid-cols-2 gap-2">
-          <ActionBtn icon={<Map className="size-6" />} label="지도 열기" primary onClick={() => { setView("map"); setOpen(true); }} />
+          <ActionBtn icon={<Map className="size-6" />} label="지도 열기" onClick={() => { setView("map"); setOpen(true); }} />
           <ActionBtn icon={<Armchair className="size-6" />} label="가까운 좌석" onClick={() => setView("seat")} />
         </div>
         <button
-          onClick={onFinish}
-          className="mt-2 w-full rounded-2xl bg-primary/10 text-primary-deep border-2 border-primary/30 py-3 text-base font-semibold"
+          onClick={goNext}
+          className="mt-2 w-full rounded-2xl bg-primary py-4 text-lg font-bold text-primary-foreground shadow-lg shadow-primary/30 active:scale-[0.98] transition inline-flex items-center justify-center gap-2"
         >
-          관람 종료
+          {isLast ? "관람 종료" : "다음 작품으로"}
+          {!isLast && <ArrowRight className="size-5" />}
         </button>
       </div>
     </div>
@@ -219,13 +284,11 @@ function Meta({ k, v }: { k: string; v: string }) {
   );
 }
 
-function ActionBtn({ icon, label, primary, onClick }: { icon: ReactNode; label: string; primary?: boolean; onClick?: () => void }) {
+function ActionBtn({ icon, label, onClick }: { icon: ReactNode; label: string; onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`rounded-2xl py-3 flex flex-col items-center gap-1 font-semibold text-sm transition active:scale-[0.97] ${
-        primary ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30" : "bg-primary/10 text-primary-deep border-2 border-primary/30"
-      }`}
+      className="rounded-2xl py-3 flex flex-col items-center gap-1 font-semibold text-sm transition active:scale-[0.97] bg-primary/10 text-primary-deep border-2 border-primary/30"
     >
       {icon}
       {label}
